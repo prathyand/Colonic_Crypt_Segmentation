@@ -85,3 +85,5 @@ def generatePatches(inputImagedirPath:str,outputImagedirPath:str,inputmaskdirPat
             if(Patchhasannotation(maskpatchlst[j]) and isUsefulPatch(imgpatchlst[j])):
                 io.imsave(outputImagedirPath+str(j)+i,imgpatchlst[j],check_contrast=False)
                 io.imsave(outputmaskdirPath+str(j)+i,maskpatchlst[j],check_contrast=False)
+
+    return
