@@ -68,7 +68,7 @@ class TissueData(Dataset):
         
         img,msk =transformed['image'],transformed['mask']
 
-        return img,(msk[:,:,0]/255.).type(torch.LongTensor)
+        return img.float(),(msk[:,:,0]/255.).type(torch.LongTensor)
 
     def __len__(self):
         return len(self.imglist)
