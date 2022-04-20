@@ -11,6 +11,8 @@ TRAINMASK_ORIG = "Colonic_crypt_dataset/train_mask/"
 TESTMASK_ORIG = "Colonic_crypt_dataset/test_mask/"
 TRAIN_IMGPATCH_SAVEPATH = "data_process/train_img_patch/"
 TRAIN_MASKPATCH_SAVEPATH = "data_process/train_mask_patch/"
+TEST_IMGPATCH_SAVEPATH = "data_process/test_img_patch/"
+TEST_MASKPATCH_SAVEPATH = "data_process/test_mask_patch/"
 TRAIN_IMAGES_PATHLIST = [TRAIN_PATH_ORIG+i for i in os.listdir(TRAIN_PATH_ORIG) if ".tiff" in i]
 TRAIN_MASK_PATHLIST = [TRAINMASK_ORIG+i for i in os.listdir(TRAINMASK_ORIG) if ".tiff" in i]
 
