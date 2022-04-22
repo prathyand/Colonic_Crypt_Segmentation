@@ -37,7 +37,7 @@ def isUsefulPatch(img:np.ndarray)->bool:
     
     return True
 
-def Patchhasannotation(img:np.ndarray)->bool:
+def Patchhasannotations(img:np.ndarray)->bool:
     ## Image shape is (H,W,3)
     if np.max(np.array(img))==0:
         return False
@@ -84,7 +84,7 @@ def generatePatches(inputImagedirPath:str,outputImagedirPath:str,inputmaskdirPat
         maskpatchlst=extract_patches(np.expand_dims(mask,axis=2),PatchShape,PatchStride)
 
         for j in range(len(imgpatchlst)):
-            if(Patchhasannotation(maskpatchlst[j]) and isUsefulPatch(imgpatchlst[j])):
+            if(Patchhasannotations(imgpatchlst[j]) and isUsefulPatch(imgpatchlst[j])):
                 io.imsave(outputImagedirPath+str(j)+i,imgpatchlst[j],check_contrast=False)
                 io.imsave(outputmaskdirPath+str(j)+i,maskpatchlst[j],check_contrast=False)
 
