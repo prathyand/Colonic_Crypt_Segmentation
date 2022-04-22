@@ -19,6 +19,19 @@ Dependency requirements:
 
 ```
 
+## Project Structure 
+
+|       **File**       |                                **Info**                               |
+|:--------------------:|:---------------------------------------------------------------------:|
+| datapreprocessing.py | module contains data preprocessing functions  (Patch generation etc.) |
+|   dataprocess.ipynb  |                       Notebook for preprocessing                      |
+|      dataset.py      |    Module for creating transforms and datasets  for model training    |
+|    model_config.py   |                  class for initializing model configs                 |
+|      trainer.py      |                Module contains model training functions               |
+|        predict       |            module containing useful functions for inference           |
+|  train_models.ipynb  |           Notebook to train and monitor models and inference          |
+
+
 ## Data preperation
 
 - Dataset(train) has 5 RGB images of size (4536, 4704)
