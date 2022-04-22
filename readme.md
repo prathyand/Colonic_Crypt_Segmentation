@@ -67,7 +67,7 @@ model = smp.UnetPlusPlus(encoder_name='efficientnet-b2',in_channels=3,classes=1,
             encoder_weights='imagenet')
 ```
 
-- DeepLabV3++ (`xception41` backbone)
+- Deeplabv3+ (`xception41` backbone)
 ```
 model = smp.DeepLabV3Plus(encoder_name='tu-xception41',in_channels=3,classes=1,encoder_output_stride=16,
             encoder_weights='imagenet')
@@ -92,7 +92,7 @@ All models were trained for 20 epochs, except for `UNET++` which was trained for
 |     UNET    | efficientnetb2 |       12       |     0.2224     |          0.8732          |     0.1524    |
 |    UNETR    |        -       |        6       |     0.6619     |          0.5130          |     0.5011    |
 |    UNET++   | efficientnetb2 |       12       |     0.1880     |          0.8660          |     0.1422    |
-| DeepLabv3++ |   xception41   |       12       |     0.1809     |          0.8671          |     0.1416    |
+| Deeplabv3+ |   xception41   |       12       |     0.1809     |          0.8671          |     0.1416    |
 
 based on the test DICE score 'UNET' gives the best results on test DICE score, but mask prediction of UNET gives some unsatisfactory results.
 
@@ -100,6 +100,30 @@ based on the test DICE score 'UNET' gives the best results on test DICE score, b
 
 Even though UNET appears to be the best model based on the test dice score, it faces issues with correctly identifying the (absence of) crypts in the region where target mask doesn't have '1' class.
 
+Example 1
+
 ![predictions of trained models on a patch](/report_images/0_CL_HandE_1234_B004_bottomleft.tiff.png)
+
+Example 2
+
+![predictions of trained models on a patch](/report_images/0_HandE_B005_CL_b_RGB_bottomleft.tiff.png)
+
+
+In both the examples above, UNET++ and Deeplabv3+ perform much better in the regions of dominant background class because of UNET++ architecture improvements over traditional UNET (such as deep supervision - loss function accessible to shalow layers which results in better gradient flow). Deeplabv3+
+
+Example 3
+
+![predictions of trained models on a patch](/report_images/24_CL_HandE_1234_B004_bottomleft.tiff.png)
+
+As soon as we see the results on a patch with dominant class '1', it becomes clear that UNET does a much better job of segmenting the crypts. Unet++ does a decent job of seperating two crypt mask boundries in close proximity, with DeepLabv3+ performing worse than the other two. 
+
+### Prediction on test images
+
+Gievn the performances of the models, inference on test images is done using only Unet++ and DeepLabv3+ due to UNET's poor performance in crypt deficient regions of the image. 
+
+To perform the inference, test images are padded with `right_borders` and `bottom_borders` using opencv to match the dimentions so that **Non-Overlapping** patches of size 512,512 can be created. Average probability is calculated on each patch from using `UNET++` and `DeepLabv3+` output with sigmoid activation. Probabilities are then averaged over models and class for each pixel is predicted using 0.5 as threshold.
+
+
+
 
 
