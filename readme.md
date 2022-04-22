@@ -123,7 +123,35 @@ Gievn the performances of the models, inference on test images is done using onl
 
 To perform the inference, test images are padded with `right_borders` and `bottom_borders` using opencv to match the dimentions so that **Non-Overlapping** patches of size 512,512 can be created. Average probability is calculated on each patch from using `UNET++` and `DeepLabv3+` output with sigmoid activation. Probabilities are then averaged over models and class for each pixel is predicted using 0.5 as threshold.
 
+All the patch masks are then stitched back to recreate the full prediction mask. Below is the result on test images:
 
+![predictions of trained models on a patch](/report_images/maskoverlays.png)
+
+#### Test dataset DICE score results:
+
+|         **test image**         | **Mean Dice** |
+|:------------------------------:|:-------------:|
+|  CL_HandE_1234_B004_bottomleft |     0.9174    |
+| HandE_B005_CL_b_RGB_bottomleft |     0.8065    |
+
+
+## t-SNE analysis on test and train datasets:
+
+To find the feature overlap within train and test datasets, t-SNE analysis is used. Featues are extracted from the last layer of encoder in UNET++ for train and test datasets. Any pixel within the (512,512) contains a mask pixel, it t is considered as class '1'. Features are created for both test and train datasets and t-SNE is performed to project the data into two dimentions. 
+
+Train data has class '0' datapoints to some extent clustered and seperated from the class '1' datapoints but there is a significant overlap in both classes in test dataset. This is probably due to the the labeling strategy described above. 
+
+#### train data TSNE
+
+![predictions of trained models on a patch](/report_images/train_tsne_.png)
+
+#### test data TSNE
+
+![predictions of trained models on a patch](/report_images/test_tsne_.png)
+
+## CSV submission
+
+`submission.csv` file contains the RLE encodings created for the test image prediction masks. 
 
 
 
