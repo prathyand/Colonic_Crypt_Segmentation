@@ -1,6 +1,6 @@
 # Colonic Crypts Segmentation 
 
-### Train segmentation models (using Pytorch) to segment the colonic crypts in the tissue images
+### Trained segmentation models (using Pytorch) to segment the colonic crypts in the tissue images
 
 Dataset : https://drive.google.com/file/d/1RHQjRav-Kw1CWT30iLJMDQ2hPMyIwAUi/view?usp=sharing
 
@@ -28,7 +28,7 @@ Dependency requirements:
 |      dataset.py      |    Module for creating transforms and datasets  for model training    |
 |    model_config.py   |                  class for initializing model configs                 |
 |      trainer.py      |                Module contains model training functions               |
-|        predict       |            module containing useful functions for inference           |
+|        predict.py       |            module containing useful functions for inference           |
 |  train_models.ipynb  |           Notebook to train and monitor models and inference          |
 
 
@@ -51,7 +51,7 @@ Libraries used for creating models: `segmentation_models_pytorch`,`monai`
 
 ### Models
 
-Four different models were trained , each for 20 epochs (except for `UNET++`):
+Four different models were trained, each for 20 epochs (except for `UNET++`):
 
 - UNET (`efficientnetb2` backbone)
 ```
@@ -59,7 +59,7 @@ model = smp.Unet(encoder_name='efficientnet-b2',in_channels=3,classes=1,
             encoder_weights='imagenet')
 ```
 
-- UNETR (Transformer based UNET : https://arxiv.org/abs/2103.10504)
+- UNETR (Transformer based UNET: https://arxiv.org/abs/2103.10504)
 ```
 model = monai.networks.nets.UNETR(spatial_dims=2,
             img_size=512,
@@ -98,7 +98,7 @@ AdamW(MODEL.parameters(), lr=1e-4, weight_decay=1e-5)
 ### Model performance metrics comparision
 Model training is done in `train_models.ipynb`.
 
-All models were trained for 20 epochs, except for `UNET++` which was trained for 5 more epochs with varying batch sizes (based on GPU memory, model parameters etc)
+All models were trained for 20 epochs, except for `UNET++` which was trained for 5 more epochs with varying batch sizes (based on GPU memory, model parameters etc.)
 
 |  **Model**  |  **backbone**  | **Batch Size** | **train loss** | **best Test DICE score** | **test loss** |
 |:-----------:|:--------------:|:--------------:|:--------------:|:------------------------:|:-------------:|
@@ -109,7 +109,7 @@ All models were trained for 20 epochs, except for `UNET++` which was trained for
 
 based on the test DICE score 'UNET' gives the best results on test DICE score, but mask prediction of UNET gives some unsatisfactory results.
 
-## Mask Prediction output comparision
+## Mask Prediction output comparison
 
 Even though UNET appears to be the best model based on the test dice score, it faces issues with correctly identifying the (absence of) crypts in the region where target mask doesn't have '1' class.
 
@@ -122,19 +122,20 @@ Example 2
 ![predictions of trained models on a patch](/report_images/0_HandE_B005_CL_b_RGB_bottomleft.tiff.png)
 
 
-In both the examples above, UNET++ and Deeplabv3+ perform much better in the regions of dominant background class because of UNET++ architecture improvements over traditional UNET (such as deep supervision - loss function accessible to shalow layers which results in better gradient flow). Deeplabv3+
+In both the examples above, UNET++ and Deeplabv3+ perform much better in the regions of dominant background class because of UNET++ architecture improvements over traditional UNET (such as deep supervision - loss function accessible to shallow layers which results in better gradient flow).
 
 Example 3
 
 ![predictions of trained models on a patch](/report_images/24_CL_HandE_1234_B004_bottomleft.tiff.png)
 
-As soon as we see the results on a patch with dominant class '1', it becomes clear that UNET does a much better job of segmenting the crypts. Unet++ does a decent job of seperating two crypt mask boundries in close proximity, with DeepLabv3+ performing worse than the other two. 
+As soon as we see the results on a patch with dominant class '1', it becomes clear that UNET does a much better job of segmenting the crypts. Unet++ does a decent job of separating two crypt mask boundaries in close proximity, with DeepLabv3+ performing worse than the other two. 
+UNETR model did not converge in 20 epochs and the train/test losses were relatively higher compared to the other models due to the smaller batch size of 6. Hence, I decided to not consider it for the inference.
 
 ### Prediction on test images
 
-Gievn the performances of the models, inference on test images is done using only Unet++ and DeepLabv3+ due to UNET's poor performance in crypt deficient regions of the image. 
+Given the performances of the models, inference on test images is done using only Unet++ and DeepLabv3+ due to UNET's poor performance in crypt deficient regions of the image. 
 
-To perform the inference, test images are padded with `right_borders` and `bottom_borders` using opencv to match the dimentions so that **Non-Overlapping** patches of size 512,512 can be created. Average probability is calculated on each patch from using `UNET++` and `DeepLabv3+` output with sigmoid activation. Probabilities are then averaged over models and class for each pixel is predicted using 0.5 as threshold.
+To perform the inference, test images are padded with `right_borders` and `bottom_borders` using OpenCV to match the dimensions so that **Non-Overlapping** patches of size 512,512 can be created. Average probability is calculated on each patch from using `UNET++` and `DeepLabv3+` output with sigmoid activation. Probabilities are then averaged over models and class for each pixel is predicted using 0.5 as threshold.
 
 All the patch masks are then stitched back to recreate the full prediction mask. Below is the result on test images:
 
@@ -150,9 +151,9 @@ All the patch masks are then stitched back to recreate the full prediction mask.
 
 ## t-SNE analysis on test and train datasets:
 
-To find the feature overlap within train and test datasets, t-SNE analysis is used. Featues are extracted from the last layer of encoder in UNET++ for train and test datasets. Any pixel within the (512,512) contains a mask pixel, it t is considered as class '1'. Features are created for both test and train datasets and t-SNE is performed to project the data into two dimentions. 
+To find the feature overlap within train and test datasets, t-SNE analysis is used. Features are extracted from the last layer of encoder in UNET++ for train and test datasets. Any pixel within the (512,512) contains a mask pixel, it t is considered as class '1'. Features are created for both test and train datasets and t-SNE is performed to project the data into two dimensions. 
 
-Train data has class '0' datapoints to some extent clustered and seperated from the class '1' datapoints but there is a significant overlap in both classes in test dataset. This is probably due to the the labeling strategy described above. 
+Train data has class '0' datapoints to some extent clustered and separated from the class '1' datapoints but there is a significant overlap in both classes in test dataset. This is probably due to the labeling strategy described above. 
 
 #### train data TSNE
 
