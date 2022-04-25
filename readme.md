@@ -40,9 +40,9 @@ Dependency requirements:
  
   ![Sample train image](/report_images/img.PNG)
 
-- Patches are ignore if:
+- Patches are ignored if:
   - they contain black stripes (as seen above)
-  - Their curresponding patches in the mask does not contain annotations (class '1') 
+  - Their curresponding patches in the mask do not have annotations (class '1') 
 
 Different Image augmentation are used during training, implemented in `dataset.py` module, library used `albumentations`
 
